@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 import os
 import socket
 from collections.abc import AsyncGenerator
@@ -34,14 +35,16 @@ def open_port() -> int:
 async def exchange_factory() -> AsyncGenerator[ExchangeFactory[Any]]:
     host = '0.0.0.0'
     port = open_port()
-    with spawn_http_exchange(
-        host=host,
-        port=port,
-    ) as exchange:
-        address = f'http://{host}:{port}'
-        env = {
-            'ACADEMY_MCP_EXCHANGE_ADDRESS': address,
-        }
-        with mock.patch.dict(os.environ, env):
-            print(address)
-            yield exchange
+    address = f'http://{host}:{port}'
+    env = {
+        'ACADEMY_MCP_EXCHANGE_ADDRESS': address,
+    }
+    with (
+        mock.patch.dict(os.environ, env),
+        spawn_http_exchange(
+            host=host,
+            port=port,
+            level=logging.DEBUG,
+        ) as exchange,
+    ):
+        yield exchange

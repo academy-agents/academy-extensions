@@ -13,7 +13,7 @@ class MockServer:
         self,
         *args,
         **kwargs,
-    ):
+    ) -> None:
         self.tools: dict[str, tuple[Any, ...]] = {}
 
     def add_tool(
@@ -22,11 +22,15 @@ class MockServer:
         name: str | None = None,
         title: str | None = None,
         description: str | None = None,
-    ):
+    ) -> None:
         if name is None:
             name = method.__name__
 
         self.tools[name] = (method, name, title, description)
+
+    def remove_tool(self, name: str) -> None:
+        if name in self.tools:
+            del self.tools[name]
 
 
 @pytest.fixture

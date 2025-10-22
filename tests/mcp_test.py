@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from collections.abc import AsyncGenerator
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
@@ -9,11 +10,17 @@ import pytest_asyncio
 from academy.exchange import ExchangeFactory
 from academy.handle import Handle
 from academy.manager import Manager
+from mcp.shared.memory import (
+    create_connected_server_and_client_session as client_session,
+)
+from mcp.types import TextContent
 
 from academy_extensions.mcp import update_tools
 from academy_extensions.mcp import wrap_agent
 from testing.agents import IdentityAgent
 from testing.mcp import MockServer
+
+MAX_TRIES = 5
 
 
 @pytest_asyncio.fixture
@@ -53,10 +60,51 @@ async def test_update_tools(
         assert len(mock_fastmcp.tools) == 2  # noqa: PLR2004
 
 
-def test_refresh_loop(): ...
+@pytest.mark.asyncio
+async def test_server(exchange_factory: ExchangeFactory[Any]):
+    from academy_extensions.mcp import mcp  # noqa: PLC0415
+
+    server_task = asyncio.create_task(mcp.run_sse_async())
+
+    async with await Manager.from_exchange_factory(
+        factory=exchange_factory,
+        executors=ThreadPoolExecutor(),
+    ) as manager:
+        id_agent = await manager.launch(IdentityAgent)
+        await mcp.call_tool(
+            'add_agent',
+            {'agent_uid': id_agent.agent_id.uid},
+        )
+        tools = mcp._tool_manager.list_tools()
+        assert len(tools) > 1
+
+        await id_agent.shutdown()
+
+    server_task.cancel()
 
 
-def test_app_has_tools(): ...
+@pytest.mark.asyncio
+async def test_client(exchange_factory: ExchangeFactory[Any]):
+    from academy_extensions.mcp import mcp  # noqa: PLC0415
 
-
-def test_add_agent(): ...
+    async with await Manager.from_exchange_factory(
+        factory=exchange_factory,
+        executors=ThreadPoolExecutor(),
+    ) as manager:
+        id_agent = await manager.launch(IdentityAgent)
+        tool_name = f'{id_agent.agent_id}-identity'
+        async with client_session(mcp._mcp_server) as client:
+            result = await client.call_tool(
+                'add_agent',
+                {'agent_uid': id_agent.agent_id.uid},
+            )
+            tools = await client.list_tools()
+            assert len(tools.tools) > 1
+            result = await client.call_tool(
+                tool_name,
+                {'args': ('hello',), 'kwargs': {}},
+            )
+            assert len(result.content) == 1
+            content = result.content[0]
+            assert isinstance(content, TextContent)
+            assert content.text == 'hello'
