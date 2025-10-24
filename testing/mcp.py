@@ -26,7 +26,7 @@ class MockServer:
         assert name is not None
         self.tools[name] = (method, name, title, description)
 
-    def remove_tool(self, name: str) -> None: # pragma: no cover
+    def remove_tool(self, name: str) -> None:  # pragma: no cover
         if name in self.tools:
             del self.tools[name]
 
