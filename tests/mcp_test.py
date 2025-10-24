@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import asyncio
+import logging
 from collections.abc import AsyncGenerator
 from concurrent.futures import ThreadPoolExecutor
-import logging
 from typing import Any
 
 import pytest
@@ -25,6 +25,7 @@ MAX_TRIES = 5
 
 logger = logging.getLogger(__name__)
 
+
 @pytest_asyncio.fixture
 async def agent(
     local_exchange_factory: ExchangeFactory[Any],
@@ -33,9 +34,9 @@ async def agent(
         factory=local_exchange_factory,
         executors=ThreadPoolExecutor(),
     ) as manager:
-        logger.debug(f"Launching agent")
+        logger.debug('Launching agent')
         hdl = await manager.launch(IdentityAgent)
-        logger.debug(f"Got handle.")
+        logger.debug('Got handle.')
         yield hdl
         await hdl.shutdown()
 

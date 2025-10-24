@@ -51,6 +51,7 @@ async def http_exchange_factory() -> AsyncGenerator[ExchangeFactory[Any]]:
     ):
         yield exchange
 
+
 @pytest_asyncio.fixture
 async def local_exchange_factory() -> ExchangeFactory[Any]:
     factory = LocalExchangeFactory()
