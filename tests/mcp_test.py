@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 from collections.abc import AsyncGenerator
 from concurrent.futures import ThreadPoolExecutor
+import logging
 from typing import Any
 
 import pytest
@@ -22,16 +23,19 @@ from testing.mcp import MockServer
 
 MAX_TRIES = 5
 
+logger = logging.getLogger(__name__)
 
 @pytest_asyncio.fixture
 async def agent(
-    exchange_factory: ExchangeFactory[Any],
+    local_exchange_factory: ExchangeFactory[Any],
 ) -> AsyncGenerator[Handle[IdentityAgent]]:
     async with await Manager.from_exchange_factory(
-        factory=exchange_factory,
+        factory=local_exchange_factory,
         executors=ThreadPoolExecutor(),
     ) as manager:
+        logger.debug(f"Launching agent")
         hdl = await manager.launch(IdentityAgent)
+        logger.debug(f"Got handle.")
         yield hdl
         await hdl.shutdown()
 
@@ -50,10 +54,10 @@ async def test_wrap_agent(
 @pytest.mark.asyncio
 async def test_update_tools(
     mock_fastmcp: MockServer,
-    exchange_factory: ExchangeFactory[Any],
+    local_exchange_factory: ExchangeFactory[Any],
     agent: Handle[Any],
 ) -> None:
-    async with await exchange_factory.create_user_client() as client:
+    async with await local_exchange_factory.create_user_client() as client:
         updates = await update_tools(mock_fastmcp, set(), client)
         assert agent.agent_id in updates
         await updates[agent.agent_id]
@@ -61,13 +65,15 @@ async def test_update_tools(
 
 
 @pytest.mark.asyncio
-async def test_server(exchange_factory: ExchangeFactory[Any]):
+async def test_server(local_exchange_factory: ExchangeFactory[Any]):
     from academy_extensions.mcp import mcp  # noqa: PLC0415
 
+    # For some reason run_stdio_async throws errors on clean up.
+    # I don't think this is a bug with my implementation, but not sure.
     server_task = asyncio.create_task(mcp.run_sse_async())
 
     async with await Manager.from_exchange_factory(
-        factory=exchange_factory,
+        factory=local_exchange_factory,
         executors=ThreadPoolExecutor(),
     ) as manager:
         id_agent = await manager.launch(IdentityAgent)
@@ -84,11 +90,11 @@ async def test_server(exchange_factory: ExchangeFactory[Any]):
 
 
 @pytest.mark.asyncio
-async def test_client(exchange_factory: ExchangeFactory[Any]):
+async def test_client(http_exchange_factory: ExchangeFactory[Any]):
     from academy_extensions.mcp import mcp  # noqa: PLC0415
 
     async with await Manager.from_exchange_factory(
-        factory=exchange_factory,
+        factory=http_exchange_factory,
         executors=ThreadPoolExecutor(),
     ) as manager:
         id_agent = await manager.launch(IdentityAgent)

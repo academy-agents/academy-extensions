@@ -9,6 +9,7 @@ from unittest import mock
 
 import pytest_asyncio
 from academy.exchange import ExchangeFactory
+from academy.exchange import LocalExchangeFactory
 from academy.exchange.cloud import spawn_http_exchange
 
 _used_ports: set[int] = set()
@@ -32,7 +33,7 @@ def open_port() -> int:
 
 
 @pytest_asyncio.fixture
-async def exchange_factory() -> AsyncGenerator[ExchangeFactory[Any]]:
+async def http_exchange_factory() -> AsyncGenerator[ExchangeFactory[Any]]:
     host = '0.0.0.0'
     port = open_port()
     address = f'http://{host}:{port}'
@@ -45,6 +46,12 @@ async def exchange_factory() -> AsyncGenerator[ExchangeFactory[Any]]:
             host=host,
             port=port,
             level=logging.DEBUG,
+            timeout=2,
         ) as exchange,
     ):
         yield exchange
+
+@pytest_asyncio.fixture
+async def local_exchange_factory() -> ExchangeFactory[Any]:
+    factory = LocalExchangeFactory()
+    return factory

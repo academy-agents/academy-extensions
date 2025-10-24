@@ -1,7 +1,7 @@
 ## Release Timeline
 
 Releases are created on an as-needed basis.
-Milestones are the [Issue Tracker](https://github.com/foobar-author/foobar/issues){target=_blank} are used to track features to be included in upcoming releases.
+Milestones are the [Issue Tracker](https://github.com/academy-agents/academy-extensions/issues){target=_blank} are used to track features to be included in upcoming releases.
 
 ## Creating Releases
 
@@ -15,13 +15,13 @@ Milestones are the [Issue Tracker](https://github.com/foobar-author/foobar/issue
 4. Tag the release commit and push (typically this is the commit updating the
    version numbers).
    ```bash
-   $ git tag -s v{VERSION} -m "FooBar v{VERSION}"
+   $ git tag -s v{VERSION} -m "academy-extensions v{VERSION}"
    $ git push origin v{VERSION}
    ```
    Note the version number is prepended by "v" for the tags so we can
    distinguish release tags from non-release tags.
 5. Create a new release on GitHub using the tag. The title should be
-   `FooBar v{VERSION}`.
+   `academy-extensions v{VERSION}`.
 6. **Official release:**
     1. Use the "Generate release notes" option and set the previous tag as the previous official release tag. E.g., for `v0.4.1`, the previous release tag should be `v0.4.0` and NOT `v0.4.1a1`.
     2. Add an "Upgrade Steps" section at the top (see previous releases for examples).

@@ -36,7 +36,9 @@ class AppContext:
 
 async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> None:
     """Wrap tool from agent for use by server."""
-    agent_info = await agent.describe()
+    logger.debug(f"Starting wrap agent for {agent.agent_id}")
+    agent_info = await agent.agent_describe()
+    logger.debug(f"Got description for {agent.agent_id}")
     for action, description in agent_info.actions.items():
         name = f'{agent.agent_id}-{action}'
 
@@ -65,6 +67,7 @@ async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> None:
             title=action,
             description=desc,
         )
+        logger.debug(f"Added tool: {name}")
 
 
 async def update_tools(
@@ -133,7 +136,7 @@ async def app_lifespan(
             )
         else:
             exchange_factory = HttpExchangeFactory(
-                'not-a-real-address',  # "https://exchange.academy-agents.org",
+                "https://exchange.academy-agents.org",
                 auth_method='globus',
             )
 

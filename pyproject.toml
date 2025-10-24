@@ -3,7 +3,7 @@ requires = ["setuptools>=64.0", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "academy_extensions"
+name = "academy-extensions"
 version = "0.1.0"
 authors = [
     {name = "Alok Kamatar"},
@@ -20,14 +20,14 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "academy-py",
+    "academy-py @ git+ssh://academy-agents/academy",
     "mcp[cli]",
 ]
 
 [project.urls]
 homepage = "https://academy-agents.org"
 documentation = "https://docs.academy-agents.org"
-repository = "https://github.com/academy-agents/academy_extensions"
+repository = "https://github.com/academy-agents/academy-extensions"
 
 [project.optional-dependencies]
 dev = [
@@ -160,7 +160,7 @@ inline-quotes = "single"
 
 [tool.ruff.lint.isort]
 force-single-line = true
-known-first-party = ["academy_extensions", "test", "testing"]
+known-first-party = ["academy-extensions", "test", "testing"]
 order-by-type = false
 required-imports = ["from __future__ import annotations"]
 

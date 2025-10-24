@@ -3,11 +3,11 @@
 We recommend using [Tox](https://tox.wiki/en/latest/index.html){target=_blank}
 to setup the development environment. This will create a new virtual
 environment with all of the required packages installed
-and FooBar installed in editable mode with the necessary extras options.
+and academy-extensions installed in editable mode with the necessary extras options.
 
 ```bash
-$ git clone https://github.com/foobar-author/foobar
-$ cd foobar
+$ git clone https://github.com/academy-agents/academy-extensions
+$ cd academy-extensions
 $ tox --devenv venv -e py310
 $ . venv/bin/activate
 ```
@@ -21,8 +21,8 @@ $ . venv/bin/activate
 
 To install manually:
 ```bash
-$ git clone https://github.com/foobar-author/foobar
-$ cd foobar
+$ git clone https://github.com/academy-agents/academy-extensions
+$ cd academy-extensions
 $ python -m venv venv
 $ . venv/bin/activate
 $ pip install -e .[dev,docs]
@@ -30,7 +30,7 @@ $ pip install -e .[dev,docs]
 
 ## Continuous Integration
 
-FooBar uses [pre-commit](https://pre-commit.com/){target=_blank} and
+Academy-extensions uses [pre-commit](https://pre-commit.com/){target=_blank} and
 [Tox](https://tox.wiki/en/latest/index.html){target=_blank} for continuous integration
 (test, linting, etc.).
 
@@ -49,8 +49,8 @@ The entire CI workflow can be run with `#!bash $ tox`.
 This will test against multiple versions of Python and can be slow.
 
 Module-level unit-test are located in the `tests/` directory and its
-structure is intended to match that of `foobar/`.
-E.g. the tests for `foobar/x/y.py` are located in
+structure is intended to match that of `academy-extensions/`.
+E.g. the tests for `academy-extensions/x/y.py` are located in
 `tests/x/y_test.py`; however, additional test files can be added
 as needed. Tests should be narrowly focused and target a single aspect of the
 code's functionality, tests should not test internal implementation details of

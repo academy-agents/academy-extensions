@@ -1,19 +1,19 @@
 # Quick Start
 
-foobar brief description.
+academy-extensions brief description.
 
 ## Overview
 
-foobar detailed overview.
+academy-extensions detailed overview.
 
 ## Installation
 
 ```bash
-$ pip install foobar
+$ pip install academy-extensions
 ```
 
 Documentation on installing for local development is provided in [Contributing](contributing/index.md).
 
 ## Usage
 
-foobar usage example.
+academy-extensions usage example.
