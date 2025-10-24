@@ -11,6 +11,7 @@ import pytest_asyncio
 from academy.exchange import ExchangeFactory
 from academy.handle import Handle
 from academy.manager import Manager
+from mcp.server.fastmcp.exceptions import ToolError
 from mcp.shared.memory import (
     create_connected_server_and_client_session as client_session,
 )
@@ -66,7 +67,7 @@ async def test_update_tools(
 
 
 @pytest.mark.asyncio
-async def test_server(local_exchange_factory: ExchangeFactory[Any]):
+async def test_server_call_tool(local_exchange_factory: ExchangeFactory[Any]):
     from academy_extensions.mcp import mcp  # noqa: PLC0415
 
     # For some reason run_stdio_async throws errors on clean up.
@@ -85,7 +86,24 @@ async def test_server(local_exchange_factory: ExchangeFactory[Any]):
         tools = mcp._tool_manager.list_tools()
         assert len(tools) > 1
 
+        tool_name = f'{id_agent.agent_id}-identity'
+        result = await mcp._tool_manager.call_tool(
+            tool_name,
+            {'args': ('hello',), 'kwargs': {}},
+        )
+        assert result == 'hello'
+
         await id_agent.shutdown()
+        await manager.wait([id_agent])
+
+        with pytest.raises(ToolError):
+            await mcp._tool_manager.call_tool(
+                tool_name,
+                {'args': ('hello',), 'kwargs': {}},
+            )
+
+        new_tools = mcp._tool_manager.list_tools()
+        assert len(new_tools) == len(tools) - 1
 
     server_task.cancel()
 

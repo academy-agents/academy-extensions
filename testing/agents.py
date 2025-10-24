@@ -22,20 +22,3 @@ class IdentityAgent(Agent):
             The same value.
         """
         return value
-
-
-class CounterAgent(Agent):
-    def __init__(self) -> None:
-        super().__init__()
-        self._count = 0
-
-    async def agent_on_startup(self) -> None:
-        self._count = 0
-
-    @action
-    async def add(self, value: int) -> None:
-        self._count += value
-
-    @action
-    async def count(self) -> int:
-        return self._count

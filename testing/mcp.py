@@ -23,9 +23,7 @@ class MockServer:
         title: str | None = None,
         description: str | None = None,
     ) -> None:
-        if name is None:
-            name = method.__name__
-
+        assert name is not None
         self.tools[name] = (method, name, title, description)
 
     def remove_tool(self, name: str) -> None:

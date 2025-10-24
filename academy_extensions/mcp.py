@@ -15,7 +15,6 @@ from typing import Any
 from academy.agent import Agent
 from academy.exception import MailboxTerminatedError
 from academy.exchange import ExchangeClient
-from academy.exchange import ExchangeFactory
 from academy.exchange import HttpExchangeFactory
 from academy.handle import Handle
 from academy.identifier import AgentId
@@ -122,23 +121,19 @@ async def refresh_loop(
 @asynccontextmanager
 async def app_lifespan(
     server: FastMCP,
-    exchange_factory: ExchangeFactory[Any] | None = None,
 ) -> AsyncIterator[AppContext]:
     """Initialize exchange client for lifespan of server."""
-    if exchange_factory is None:
-        if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:
-            auth = (
-                'globus' if 'ACADEMY_MCP_EXCHANGE_AUTH' in os.environ else None
-            )
-            exchange_factory = HttpExchangeFactory(
-                os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS'],
-                auth_method=auth,  # type: ignore
-            )
-        else:
-            exchange_factory = HttpExchangeFactory(
-                'https://exchange.academy-agents.org',
-                auth_method='globus',
-            )
+    if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:  # pragma: no branch
+        auth = 'globus' if 'ACADEMY_MCP_EXCHANGE_AUTH' in os.environ else None
+        exchange_factory = HttpExchangeFactory(
+            os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS'],
+            auth_method=auth,  # type: ignore
+        )
+    else:
+        exchange_factory = HttpExchangeFactory(
+            'https://exchange.academy-agents.org',
+            auth_method='globus',
+        )
 
     async with await exchange_factory.create_user_client() as client:
         context = AppContext(exchange_client=client)
