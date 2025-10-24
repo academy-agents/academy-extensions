@@ -67,7 +67,7 @@ dist,
 
 [tool.coverage.run]
 plugins = ["covdefaults"]
-omit = ["examples"]
+omit = ["testing/"]
 
 [tool.mypy]
 python_version = "3.12"
