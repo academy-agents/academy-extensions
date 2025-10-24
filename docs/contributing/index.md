@@ -49,8 +49,8 @@ The entire CI workflow can be run with `#!bash $ tox`.
 This will test against multiple versions of Python and can be slow.
 
 Module-level unit-test are located in the `tests/` directory and its
-structure is intended to match that of `academy-extensions/`.
-E.g. the tests for `academy-extensions/x/y.py` are located in
+structure is intended to match that of `academy_extensions/`.
+E.g. the tests for `academy_extensions/x/y.py` are located in
 `tests/x/y_test.py`; however, additional test files can be added
 as needed. Tests should be narrowly focused and target a single aspect of the
 code's functionality, tests should not test internal implementation details of

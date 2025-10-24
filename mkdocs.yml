@@ -1,5 +1,5 @@
 site_name: Python Template
-site_url: https://gpauloski.github.io/academy-extensions
+site_url: https://academy-agents.github.io/academy-extensions
 site_author: Alok Kamatar
 site_description: Documentation for Academy Extensions.
 
@@ -61,7 +61,7 @@ watch:
   - mkdocs.yml
   - README.md
   - docs/
-  - academy-extensions/
+  - academy_extensions/
 
 extra:
   version:

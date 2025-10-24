@@ -160,7 +160,7 @@ inline-quotes = "single"
 
 [tool.ruff.lint.isort]
 force-single-line = true
-known-first-party = ["academy-extensions", "test", "testing"]
+known-first-party = ["academy_extensions", "test", "testing"]
 order-by-type = false
 required-imports = ["from __future__ import annotations"]
 
