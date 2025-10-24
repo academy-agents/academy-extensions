@@ -20,7 +20,7 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "academy-py @ git+ssh://academy-agents/academy",
+    "academy-py @ git+ssh://git@github.com/academy-agents/academy.git",
     "mcp[cli]",
 ]
 
