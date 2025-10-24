@@ -123,13 +123,13 @@ async def app_lifespan(
     server: FastMCP,
 ) -> AsyncIterator[AppContext]:
     """Initialize exchange client for lifespan of server."""
-    if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:  # pragma: no branch
+    if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:
         auth = 'globus' if 'ACADEMY_MCP_EXCHANGE_AUTH' in os.environ else None
         exchange_factory = HttpExchangeFactory(
             os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS'],
             auth_method=auth,  # type: ignore
         )
-    else:
+    else:  # pragma: no cover
         exchange_factory = HttpExchangeFactory(
             'https://exchange.academy-agents.org',
             auth_method='globus',
