@@ -1,12 +1,12 @@
 site_name: Python Template
-site_url: https://gpauloski.github.io/python-template
-site_author: FooBar Author
-site_description: Documentation for FooBar.
+site_url: https://academy-agents.github.io/academy-extensions
+site_author: Alok Kamatar
+site_description: Documentation for Academy Extensions.
 
-repo_name: gpauloski/python-template
-repo_url: https://github.com/gpauloski/python-template
+repo_name: academy-agents/academy-extensions
+repo_url: https://github.com/academy-agents/academy-extensions
 
-copyright: Copyright &copy; 2023—Present FooBar Authors
+copyright: Copyright &copy; 2023—Present Academy Authors
 
 theme:
   name: material
@@ -61,7 +61,7 @@ watch:
   - mkdocs.yml
   - README.md
   - docs/
-  - foobar/
+  - academy_extensions/
 
 extra:
   version:
@@ -90,8 +90,8 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.magiclink:
       repo_url_shorthand: true
-      user: foobar-author
-      repo: foobar
+      user: academy-agents
+      repo: academy-extensions
   - pymdownx.mark
   - pymdownx.smartsymbols
   - pymdownx.snippets:

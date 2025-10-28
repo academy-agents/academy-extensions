@@ -1,5 +1,5 @@
 # Installation
 
 ```bash
-$ pip install foobar
+$ pip install academy-extensions
 ```

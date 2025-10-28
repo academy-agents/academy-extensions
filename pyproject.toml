@@ -3,13 +3,13 @@ requires = ["setuptools>=64.0", "setuptools_scm"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "foobar"
+name = "academy-extensions"
 version = "0.1.0"
 authors = [
-    {name = "foobar author"},
-    {email = "foobar@foobar.com"},
+    {name = "Alok Kamatar"},
+    {email = "alokvk2@uchicago.edu"},
 ]
-description = "Foobar example package."
+description = "Beyond the core Academy framework functionality."
 readme = "README.md"
 requires-python = ">=3.9"
 license = {text = "MIT"}
@@ -20,13 +20,14 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "requests",
+    "academy-py @ git+https://github.com/academy-agents/academy.git",
+    "mcp[cli]",
 ]
 
 [project.urls]
-homepage = "https://github.com/foobar-author/foobar"
-documentation = "https://foobar.readthedocs.io"
-repository = "https://github.com/foobar-author/foobar"
+homepage = "https://academy-agents.org"
+documentation = "https://docs.academy-agents.org"
+repository = "https://github.com/academy-agents/academy-extensions"
 
 [project.optional-dependencies]
 dev = [
@@ -35,6 +36,7 @@ dev = [
     "mypy",
     "pre-commit",
     "pytest",
+    "pytest-asyncio>=1.1",
     "pytest-cov",
     "ruff>=0.2.0",
     "tox",
@@ -65,10 +67,13 @@ dist,
 
 [tool.coverage.run]
 plugins = ["covdefaults"]
-omit = ["examples"]
+omit = ["testing/"]
 
 [tool.mypy]
 python_version = "3.12"
+plugins = [
+    "academy.mypy_plugin",
+]
 check_untyped_defs = true
 disallow_any_generics = true
 disallow_incomplete_defs = true
@@ -87,6 +92,13 @@ allow_untyped_defs = true
 module = "tests.*"
 allow_incomplete_defs = true
 allow_untyped_defs = true
+
+[tool.pytest.ini_options]
+asyncio_default_fixture_loop_scope = "function"
+asyncio_mode = "auto"
+markers = [
+    "integration: marks integration tests",
+]
 
 [tool.ruff]
 line-length = 79
@@ -148,13 +160,15 @@ inline-quotes = "single"
 
 [tool.ruff.lint.isort]
 force-single-line = true
-known-first-party = ["foobar", "test", "testing"]
+known-first-party = ["academy_extensions", "test", "testing"]
 order-by-type = false
 required-imports = ["from __future__ import annotations"]
 
 [tool.ruff.lint.per-file-ignores]
 "*/__init__.py" = ["F401"]
+"tests/conftest.py" = ["F401", "D100"]
 "*/*_test.py" = ["D10"]
+"testing/*" = ["D"]
 
 [tool.ruff.lint.pydocstyle]
 convention = "google"
