@@ -124,18 +124,22 @@ async def app_lifespan(
 ) -> AsyncIterator[AppContext]:
     """Initialize exchange client for lifespan of server."""
     if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:
+        url = os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS']
         auth = 'globus' if 'ACADEMY_MCP_EXCHANGE_AUTH' in os.environ else None
+        logger.info(f"Connection to exchange at {url}")
         exchange_factory = HttpExchangeFactory(
-            os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS'],
+            url,
             auth_method=auth,  # type: ignore
         )
     else:  # pragma: no cover
+        logger.info(f"Connection to exchange at dummy-address")
         exchange_factory = HttpExchangeFactory(
-            'https://exchange.academy-agents.org',
+            "dummy-address", #'https://exchange.academy-agents.org',
             auth_method='globus',
         )
 
     async with await exchange_factory.create_user_client() as client:
+        logger.info(f"Connected to exchange")
         context = AppContext(exchange_client=client)
         refresh_task = asyncio.create_task(refresh_loop(server, context))
         yield context
