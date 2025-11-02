@@ -8,7 +8,6 @@ from unittest import mock
 
 import pytest
 import pytest_asyncio
-from academy.agent import Agent
 from academy.exchange import ExchangeFactory
 from academy.handle import Handle
 from academy.identifier import AgentId
@@ -81,24 +80,34 @@ async def test_update_tools(
 
 
 @pytest_asyncio.fixture
-async def server_context(
-    local_exchange_factory: ExchangeFactory[Any],
-) -> AsyncGenerator[Context[ServerSession, AppContext]]:
-    async with await local_exchange_factory.create_user_client() as client:
-        lifespan_context = AppContext(
-            exchange_client=client,
-            agents=set(),
-        )
-        ctx = mock.Mock()
-        ctx.request_context.lifespan_context = lifespan_context
-        yield ctx
+async def context_and_agent(
+    http_exchange_factory: ExchangeFactory[Any],
+) -> AsyncGenerator[
+    tuple[Context[ServerSession, AppContext], Handle[IdentityAgent]]
+]:
+    async with await Manager.from_exchange_factory(
+        factory=http_exchange_factory,
+        executors=ThreadPoolExecutor(),
+    ) as manager:
+        id_agent = await manager.launch(IdentityAgent)
+        async with await http_exchange_factory.create_user_client() as client:
+            lifespan_context = AppContext(
+                exchange_client=client,
+                agents=set(),
+            )
+            ctx = mock.Mock()
+            ctx.request_context.lifespan_context = lifespan_context
+            yield ctx, id_agent
 
 
 @pytest.mark.asyncio
 async def test_add_agent(
-    server_context: Context[ServerSession, AppContext],
-    agent: Handle[IdentityAgent],
+    context_and_agent: tuple[
+        Context[ServerSession, AppContext],
+        Handle[IdentityAgent],
+    ],
 ) -> None:
+    server_context, agent = context_and_agent
     tools = await add_agent(server_context, agent.agent_id.uid)
     assert len(tools) == 2  # noqa: PLR2004
     assert format_name(agent.agent_id, 'identity') in tools
@@ -108,14 +117,21 @@ async def test_add_agent(
 
 @pytest.mark.asyncio
 async def test_discover(
-    server_context: Context[ServerSession, AppContext],
-    agent: Handle[IdentityAgent],
+    context_and_agent: tuple[
+        Context[ServerSession, AppContext],
+        Handle[IdentityAgent],
+    ],
 ) -> None:
-    all_agents = await discover(server_context, Agent)
+    server_context, agent = context_and_agent
+    all_agents = await discover(server_context, 'Agent', 'academy.agent')
     assert len(all_agents) == 1
     assert agent.agent_id.uid in all_agents
 
-    identity_agents = await discover(server_context, IdentityAgent)
+    identity_agents = await discover(
+        server_context,
+        'IdentityAgent',
+        'testing.agents',
+    )
     assert len(identity_agents) == 1
     assert agent.agent_id.uid in all_agents
 

@@ -183,15 +183,19 @@ async def add_agent(
 @mcp.tool()
 async def discover(
     ctx: Context[ServerSession, AppContext],
-    agent: type[Agent],
+    agent: str,
+    module: str,
     allow_subclasses: bool = True,
 ) -> tuple[uuid.UUID, ...]:
     """Search for agents of type Agent on the exchange.
 
+    To search for all agents, use agent_type="Agent",
+    module="academy.Agent".
+
     Args:
         ctx: FastMCP context (provided)
-        agent: Type of agent to look for. Use academy.agent.Agent to find
-            all agents belonging to you on the exchange.
+        agent: The type of the agent to return.
+        module: The module where the agent was implemented.
         allow_subclasses: Return agents implementing subclasses of the
             agent.
 
@@ -199,8 +203,13 @@ async def discover(
         Tuple of agent uids implementing the agent.
     """
     exchange = ctx.request_context.lifespan_context.exchange_client
+
+    fake_agent = type(agent, (Agent,), {'__module__': module})
+    assert (
+        f'{module}.{agent}' == f'{fake_agent.__module__}.{fake_agent.__name__}'
+    )
     agent_ids = await exchange.discover(
-        agent,
+        fake_agent,
         allow_subclasses=allow_subclasses,
     )
     return tuple(agent_id.uid for agent_id in agent_ids)
