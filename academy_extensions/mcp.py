@@ -175,7 +175,35 @@ async def add_agent(
     """
     aid: AgentId[Any] = AgentId(uid=agent_uid)  # type: ignore[call-arg]
     agent: Handle[Any] = Handle(aid)
-    return await wrap_agent(mcp, agent)
+    tools = await wrap_agent(mcp, agent)
+    ctx.request_context.lifespan_context.agents.add(aid)
+    return tools
+
+
+@mcp.tool()
+async def discover(
+    ctx: Context[ServerSession, AppContext],
+    agent: type[Agent],
+    allow_subclasses: bool = True,
+) -> tuple[uuid.UUID, ...]:
+    """Search for agents of type Agent on the exchange.
+
+    Args:
+        ctx: FastMCP context (provided)
+        agent: Type of agent to look for. Use academy.agent.Agent to find
+            all agents belonging to you on the exchange.
+        allow_subclasses: Return agents implementing subclasses of the
+            agent.
+
+    Returns:
+        Tuple of agent uids implementing the agent.
+    """
+    exchange = ctx.request_context.lifespan_context.exchange_client
+    agent_ids = await exchange.discover(
+        agent,
+        allow_subclasses=allow_subclasses,
+    )
+    return tuple(agent_id.uid for agent_id in agent_ids)
 
 
 if __name__ == '__main__':
