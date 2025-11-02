@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-import asyncio
 import logging
 from collections.abc import AsyncGenerator
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
+from unittest import mock
 
 import pytest
 import pytest_asyncio
@@ -12,12 +12,16 @@ from academy.exchange import ExchangeFactory
 from academy.handle import Handle
 from academy.identifier import AgentId
 from academy.manager import Manager
-from mcp.server.fastmcp.exceptions import ToolError
+from mcp.server.fastmcp import Context
+from mcp.server.session import ServerSession
 from mcp.shared.memory import (
     create_connected_server_and_client_session as client_session,
 )
 from mcp.types import TextContent
 
+from academy_extensions.mcp import add_agent
+from academy_extensions.mcp import AppContext
+from academy_extensions.mcp import discover
 from academy_extensions.mcp import format_name
 from academy_extensions.mcp import update_tools
 from academy_extensions.mcp import wrap_agent
@@ -75,46 +79,61 @@ async def test_update_tools(
         assert len(mock_fastmcp.tools) == 2  # noqa: PLR2004
 
 
-@pytest.mark.asyncio
-async def test_server_call_tool(local_exchange_factory: ExchangeFactory[Any]):
-    from academy_extensions.mcp import mcp  # noqa: PLC0415
-
-    # For some reason run_stdio_async throws errors on clean up.
-    # I don't think this is a bug with my implementation, but not sure.
-    server_task = asyncio.create_task(mcp.run_sse_async())
-
+@pytest_asyncio.fixture
+async def context_and_agent(
+    http_exchange_factory: ExchangeFactory[Any],
+) -> AsyncGenerator[
+    tuple[Context[ServerSession, AppContext], Handle[IdentityAgent]]
+]:
     async with await Manager.from_exchange_factory(
-        factory=local_exchange_factory,
+        factory=http_exchange_factory,
         executors=ThreadPoolExecutor(),
     ) as manager:
         id_agent = await manager.launch(IdentityAgent)
-        await mcp.call_tool(
-            'add_agent',
-            {'agent_uid': id_agent.agent_id.uid},
-        )
-        tools = mcp._tool_manager.list_tools()
-        assert len(tools) > 1
-
-        tool_name = format_name(id_agent.agent_id, 'identity')
-        result = await mcp._tool_manager.call_tool(
-            tool_name,
-            {'args': ('hello',), 'kwargs': {}},
-        )
-        assert result == 'hello'
-
-        await id_agent.shutdown()
-        await manager.wait([id_agent])
-
-        with pytest.raises(ToolError):
-            await mcp._tool_manager.call_tool(
-                tool_name,
-                {'args': ('hello',), 'kwargs': {}},
+        async with await http_exchange_factory.create_user_client() as client:
+            lifespan_context = AppContext(
+                exchange_client=client,
+                agents=set(),
             )
+            ctx = mock.Mock()
+            ctx.request_context.lifespan_context = lifespan_context
+            yield ctx, id_agent
 
-        new_tools = mcp._tool_manager.list_tools()
-        assert len(new_tools) == len(tools) - 1
 
-    server_task.cancel()
+@pytest.mark.asyncio
+async def test_add_agent(
+    context_and_agent: tuple[
+        Context[ServerSession, AppContext],
+        Handle[IdentityAgent],
+    ],
+) -> None:
+    server_context, agent = context_and_agent
+    tools = await add_agent(server_context, agent.agent_id.uid)
+    assert len(tools) == 2  # noqa: PLR2004
+    assert format_name(agent.agent_id, 'identity') in tools
+    agents = server_context.request_context.lifespan_context.agents
+    assert agent.agent_id in agents
+
+
+@pytest.mark.asyncio
+async def test_discover(
+    context_and_agent: tuple[
+        Context[ServerSession, AppContext],
+        Handle[IdentityAgent],
+    ],
+) -> None:
+    server_context, agent = context_and_agent
+    all_agents = await discover(server_context, 'Agent', 'academy.agent')
+    assert len(all_agents) == 1
+    assert agent.agent_id.uid in all_agents
+
+    identity_agents = await discover(
+        server_context,
+        'IdentityAgent',
+        'testing.agents',
+    )
+    assert len(identity_agents) == 1
+    assert agent.agent_id.uid in all_agents
 
 
 @pytest.mark.asyncio
@@ -142,3 +161,15 @@ async def test_client(http_exchange_factory: ExchangeFactory[Any]):
             content = result.content[0]
             assert isinstance(content, TextContent)
             assert content.text == 'hello'
+
+            await id_agent.shutdown()
+            await manager.wait([id_agent])
+
+            result = await client.call_tool(
+                tool_name,
+                {'args': ('hello',), 'kwargs': {}},
+            )
+            assert result.isError
+
+            new_tools = await client.list_tools()
+            assert len(new_tools.tools) == len(tools.tools) - 1
