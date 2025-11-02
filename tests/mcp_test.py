@@ -10,6 +10,7 @@ import pytest
 import pytest_asyncio
 from academy.exchange import ExchangeFactory
 from academy.handle import Handle
+from academy.identifier import AgentId
 from academy.manager import Manager
 from mcp.server.fastmcp.exceptions import ToolError
 from mcp.shared.memory import (
@@ -17,12 +18,11 @@ from mcp.shared.memory import (
 )
 from mcp.types import TextContent
 
+from academy_extensions.mcp import format_name
 from academy_extensions.mcp import update_tools
 from academy_extensions.mcp import wrap_agent
 from testing.agents import IdentityAgent
 from testing.mcp import MockServer
-
-MAX_TRIES = 5
 
 logger = logging.getLogger(__name__)
 
@@ -42,15 +42,24 @@ async def agent(
         await hdl.shutdown()
 
 
+def test_format_name():
+    agent: AgentId[Any] = AgentId.new()
+    name = format_name(agent, 'simulate')
+    assert str(agent.uid) in name
+    assert 'simulate' in name
+
+
 @pytest.mark.asyncio
 async def test_wrap_agent(
     mock_fastmcp: MockServer,
     agent: Handle[Any],
 ) -> None:
-    await wrap_agent(mock_fastmcp, agent)
+    tools = await wrap_agent(mock_fastmcp, agent)
 
+    tool = format_name(agent.agent_id, 'identity')
     assert len(mock_fastmcp.tools) == 2  # noqa: PLR2004
-    assert f'{agent.agent_id}-identity' in mock_fastmcp.tools
+    assert tool in mock_fastmcp.tools
+    assert tool in tools
 
 
 @pytest.mark.asyncio
@@ -86,7 +95,7 @@ async def test_server_call_tool(local_exchange_factory: ExchangeFactory[Any]):
         tools = mcp._tool_manager.list_tools()
         assert len(tools) > 1
 
-        tool_name = f'{id_agent.agent_id}-identity'
+        tool_name = format_name(id_agent.agent_id, 'identity')
         result = await mcp._tool_manager.call_tool(
             tool_name,
             {'args': ('hello',), 'kwargs': {}},
@@ -117,7 +126,7 @@ async def test_client(http_exchange_factory: ExchangeFactory[Any]):
         executors=ThreadPoolExecutor(),
     ) as manager:
         id_agent = await manager.launch(IdentityAgent)
-        tool_name = f'{id_agent.agent_id}-identity'
+        tool_name = format_name(id_agent.agent_id, 'identity')
         async with client_session(mcp._mcp_server) as client:
             result = await client.call_tool(
                 'add_agent',

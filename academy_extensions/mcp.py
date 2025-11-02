@@ -33,13 +33,19 @@ class AppContext:
     agents: set[AgentId[Any]] = field(default_factory=set)
 
 
-async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> None:
+def format_name(agent: AgentId[Any], action: str) -> str:
+    """Format an agent action into a tool name."""
+    return f'{agent.uid}_{action}'
+
+
+async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> dict[str, str]:
     """Wrap tool from agent for use by server."""
     logger.debug(f'Starting wrap agent for {agent.agent_id}')
     agent_info = await agent.agent_describe()
     logger.debug(f'Got description for {agent.agent_id}')
+    tools: dict[str, str] = {}
     for action, description in agent_info.actions.items():
-        name = f'{agent.agent_id}-{action}'
+        name = format_name(agent.agent_id, action)
 
         async def invoke(
             args: tuple[Any, ...],
@@ -66,7 +72,10 @@ async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> None:
             title=action,
             description=desc,
         )
-        logger.debug(f'Added tool: {name}')
+        tools[name] = desc
+        logger.info(f'Added tool: {name}')
+
+    return tools
 
 
 async def update_tools(
@@ -124,18 +133,22 @@ async def app_lifespan(
 ) -> AsyncIterator[AppContext]:
     """Initialize exchange client for lifespan of server."""
     if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:
+        url = os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS']
         auth = 'globus' if 'ACADEMY_MCP_EXCHANGE_AUTH' in os.environ else None
+        logger.info(f'Connection to exchange at {url}')
         exchange_factory = HttpExchangeFactory(
-            os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS'],
+            url,
             auth_method=auth,  # type: ignore
         )
     else:  # pragma: no cover
+        logger.info('Connection to exchange at dummy-address')
         exchange_factory = HttpExchangeFactory(
-            'https://exchange.academy-agents.org',
+            'dummy-address',  #'https://exchange.academy-agents.org',
             auth_method='globus',
         )
 
     async with await exchange_factory.create_user_client() as client:
+        logger.info('Connected to exchange')
         context = AppContext(exchange_client=client)
         refresh_task = asyncio.create_task(refresh_loop(server, context))
         yield context
@@ -150,7 +163,7 @@ mcp = FastMCP('MCP Academy Exchange Interface', lifespan=app_lifespan)
 async def add_agent(
     ctx: Context[ServerSession, AppContext],
     agent_uid: uuid.UUID,
-) -> None:
+) -> dict[str, str]:
     """Add agent to MCP server based on ID.
 
     Args:
@@ -162,7 +175,7 @@ async def add_agent(
     """
     aid: AgentId[Any] = AgentId(uid=agent_uid)  # type: ignore[call-arg]
     agent: Handle[Any] = Handle(aid)
-    await wrap_agent(mcp, agent)
+    return await wrap_agent(mcp, agent)
 
 
 if __name__ == '__main__':
