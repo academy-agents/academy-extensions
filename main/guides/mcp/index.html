@@ -558,6 +558,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use" class="md-nav__link">
     <span class="md-ellipsis">
       Use
@@ -860,6 +869,15 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#running" class="md-nav__link">
+    <span class="md-ellipsis">
+      Running
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#use" class="md-nav__link">
     <span class="md-ellipsis">
       Use
@@ -890,30 +908,28 @@
 <hr />
 <p>The Academy-MCP plug-in is an MCP server that connects to a (remote) Academy exchange instance.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<p><code>[bash]
-$ git clone git@github.com:academy-agents/academy-extensions.git
-$ cd academy-extenstions
-$ python -m venv venv
-$ . ./venv/bin/activate
-$ pip install -e .
-<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>Refer to the installation of academy-extensions for more details
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>## Running
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>To run the MCP server manually (i.e for testing or to connect to it as a remote MCP server), run:
+<p><div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>$ git clone git@github.com:academy-agents/academy-extensions.git
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>$ cd academy-extenstions
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>$ python -m venv venv
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>$ . ./venv/bin/activate
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>$ pip install -e .
 </span></code></pre></div>
-$ python -m academy_extensions.mcp
-<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>To install it with claude desktop, using `uv`:
-</span></code></pre></div>
-$ uv run mcp install academy_extensions/mcp.py
-<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>The exchange that the MCP server connects to defaults to the hosted exchange at https://exchange.academy-agents.org. To connect to a different exchange specify the url in an environment variable:
-</span></code></pre></div>
-$ export ACADEMY_MCP_EXCHANGE_ADDRESS="https://dummy-address.org/exchange"
-$ export ACADEMY_MCP_EXCHANGE_AUTH=1 # If the exchange uses globus auth
-$ python -m academy_extensions.mcp
-<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>or to configure the environment when installing:
-</span></code></pre></div>
-$ uv run mcp install academy_extensions/mcp.py -v ACADEMY_MCP_EXCHANGE_ADDRESS=...</code></p>
+Refer to the installation of academy-extensions for more details</p>
+<h2 id="running">Running<a class="headerlink" href="#running" title="Permanent link">&para;</a></h2>
+<p>To run the MCP server manually (i.e for testing or to connect to it as a remote MCP server), run:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>$ python -m academy_extensions.mcp
+</span></code></pre></div></p>
+<p>To install it with claude desktop, using <code>uv</code>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>$ uv run mcp install academy_extensions/mcp.py
+</span></code></pre></div></p>
+<p>The exchange that the MCP server connects to defaults to the hosted exchange at <a href="https://exchange.academy-agents.org">https://exchange.academy-agents.org</a>. To connect to a different exchange specify the url in an environment variable:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>$ export ACADEMY_MCP_EXCHANGE_ADDRESS=&quot;https://dummy-address.org/exchange&quot;
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>$ export ACADEMY_MCP_EXCHANGE_AUTH=1 # If the exchange uses globus auth
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>$ python -m academy_extensions.mcp
+</span></code></pre></div></p>
+<p>or to configure the environment when installing:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>$ uv run mcp install academy_extensions/mcp.py -v ACADEMY_MCP_EXCHANGE_ADDRESS=...
+</span></code></pre></div></p>
 <p><strong>Note</strong>: Only the <code>HttpExchangeFactory</code> is currently supported with the Academy-MCP plug-in. We are working to be able to configure other exchange types.</p>
 <h2 id="use">Use<a class="headerlink" href="#use" title="Permanent link">&para;</a></h2>
 <p>The MCP server discovers all agents that you have available to you and turns them in to MCP tools.
