@@ -150,7 +150,9 @@ select = [
     # ruff-specific
     "RUF",
 ]
-extend-ignore = []
+extend-ignore = [
+    "D100", "D104", "D105", "D107",
+]
 
 [tool.ruff.lint.flake8-pytest-style]
 parametrize-values-type = "tuple"

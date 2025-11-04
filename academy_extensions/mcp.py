@@ -8,8 +8,6 @@ import os
 import uuid
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from dataclasses import dataclass
-from dataclasses import field
 from typing import Any
 
 from academy.agent import Agent
@@ -25,12 +23,20 @@ from mcp.server.session import ServerSession
 logger = logging.getLogger(__name__)
 
 
-@dataclass
 class AppContext:
-    """Application context with typed dependencies."""
+    """Application context with typed dependencies.
 
-    exchange_client: ExchangeClient[Any]
-    agents: set[AgentId[Any]] = field(default_factory=set)
+    Args:
+        exchange_client: The client used to communicate on the exchange.
+    """
+
+    def __init__(
+        self,
+        exchange_client: ExchangeClient[Any],
+        agents: set[AgentId[Any]] | None = None,
+    ):
+        self.exchange_client = exchange_client
+        self.agents = agents if agents else set()
 
 
 def format_name(agent: AgentId[Any], action: str) -> str:
