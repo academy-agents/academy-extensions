@@ -1,4 +1,4 @@
-site_name: Python Template
+site_name: Academy Extensions
 site_url: https://academy-agents.github.io/academy-extensions
 site_author: Alok Kamatar
 site_description: Documentation for Academy Extensions.
@@ -28,34 +28,24 @@ theme:
   palette:
     # Palette toggle for automatic mode
     - media: "(prefers-color-scheme)"
-      scheme: default
-      primary: red
-      accent: blue
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
-
     # Palette toggle for light mode
     - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: red
-      accent: blue
+      primary: academy-light
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
-
     # Palette toggle for dark mode
     - media: "(prefers-color-scheme: dark)"
+      primary: academy-dark
       scheme: slate
-      primary: red
-      accent: blue
       toggle:
         icon: material/brightness-4
         name: Switch to system preference
-  overrides: docs/_overrides
-  # favicon: static/favicon.png
-  # icon:
-  #   logo: logo
+  favicon: static/favicon.png
+  logo: static/favicon.png
 
 watch:
   - mkdocs.yml
@@ -105,14 +95,10 @@ markdown_extensions:
 nav:
   - Home:
       - Overview: index.md
-      - Installation: installation.md
-      - Get Started: get-started.md
-      - Examples: examples.md
-      - Known Issues: known-issues.md
-      - Changelog (GitHub): https://github.com/gpauloski/python-template/releases
+      - Issues (GitHub): https://github.com/academy-agents/academy-extensions/issues
   - Guides:
       - guides/index.md
-      - Example: guides/example.md
+      - MCP: guides/mcp.md
   - API Reference: api/
   - Contributing:
       - contributing/index.md
@@ -139,6 +125,14 @@ plugins:
             - pytkdocs_tweaks.main()
           import:
             - https://docs.python.org/3/objects.inv
+            - https://docs.proxystore.dev/main/objects.inv
+            - https://extensions.proxystore.dev/main/objects.inv
+            - https://docs.pydantic.dev/latest/objects.inv
+            - https://redis.readthedocs.io/en/stable/objects.inv
+            - https://parsl.readthedocs.io/en/stable/objects.inv
+            - https://globus-compute.readthedocs.io/en/stable/objects.inv
+            - https://globus-sdk-python.readthedocs.io/en/stable/objects.inv
+            - https://docs.academy-agents.org/main/objects.inv
           options:
             annotations_path: brief
             docstring_section_style: list

@@ -11,7 +11,7 @@ authors = [
 ]
 description = "Beyond the core Academy framework functionality."
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = {text = "MIT"}
 classifiers = [
     "License :: OSI Approved :: MIT License",
