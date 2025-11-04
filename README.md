@@ -32,4 +32,5 @@ $ pip install -e .[dev]
 ## Modules
 
 Academy-extensions currently provides the following modules:
+
  - [Academy MCP Plug-in](guides/mcp.md)

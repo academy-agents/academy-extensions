@@ -4,7 +4,7 @@ The Academy-MCP plug-in is an MCP server that connects to a (remote) Academy exc
 
 
 ## Installation
-```[bash]
+```
 $ git clone git@github.com:academy-agents/academy-extensions.git
 $ cd academy-extenstions
 $ python -m venv venv
