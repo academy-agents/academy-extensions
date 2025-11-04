@@ -2,58 +2,42 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/</loc>
-         <lastmod>2025-11-03</lastmod>
-    </url>
-    <url>
-         <loc>https://academy-agents.github.io/academy-extensions/latest/examples/</loc>
-         <lastmod>2025-11-03</lastmod>
-    </url>
-    <url>
-         <loc>https://academy-agents.github.io/academy-extensions/latest/get-started/</loc>
-         <lastmod>2025-11-03</lastmod>
-    </url>
-    <url>
-         <loc>https://academy-agents.github.io/academy-extensions/latest/installation/</loc>
-         <lastmod>2025-11-03</lastmod>
-    </url>
-    <url>
-         <loc>https://academy-agents.github.io/academy-extensions/latest/known-issues/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/api/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/api/SUMMARY/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/api/mcp/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/contributing/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/contributing/issues-pull-requests/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/contributing/releases/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/contributing/style-guide/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
          <loc>https://academy-agents.github.io/academy-extensions/latest/guides/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <lastmod>2025-11-04</lastmod>
     </url>
     <url>
-         <loc>https://academy-agents.github.io/academy-extensions/latest/guides/example/</loc>
-         <lastmod>2025-11-03</lastmod>
+         <loc>https://academy-agents.github.io/academy-extensions/latest/guides/mcp/</loc>
+         <lastmod>2025-11-04</lastmod>
     </url>
 </urlset>
