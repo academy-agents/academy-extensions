@@ -141,9 +141,11 @@ async def app_lifespan(
             auth_method=auth,  # type: ignore
         )
     else:  # pragma: no cover
-        logger.info('Connection to exchange at dummy-address')
+        logger.info(
+            'Connection to exchange at https://exchange.academy-agents.org',
+        )
         exchange_factory = HttpExchangeFactory(
-            'dummy-address',  #'https://exchange.academy-agents.org',
+            'https://exchange.academy-agents.org',
             auth_method='globus',
         )
 
