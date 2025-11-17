@@ -16,9 +16,6 @@ python -m venv venv
 pip install -e .
 ```
 
-Note, that currently `academy-extensions` relies on new features of `academy` not in version `0.3.0`. Till a new `academy` release is made, `academy-extensions` depends on the github version of `academy`. For now, this is impeding a PyPI release --- but we aim to release both a new version of `academy` and `academy-extensions` before 11/15/2025.
-
-
 For local development:
 ```
 $ tox --devenv venv -e py310
