@@ -16,8 +16,8 @@ from academy.exchange import ExchangeClient
 from academy.exchange import HttpExchangeFactory
 from academy.handle import Handle
 from academy.identifier import AgentId
-from mcp.server.fastmcp import Context
-from mcp.server.fastmcp import FastMCP
+from mcp.server.mcpserver import Context
+from mcp.server.mcpserver import MCPServer
 from mcp.server.session import ServerSession
 
 logger = logging.getLogger(__name__)
@@ -44,7 +44,7 @@ def format_name(agent: AgentId[Any], action: str) -> str:
     return f'{agent.uid}_{action}'
 
 
-async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> dict[str, str]:
+async def wrap_agent(server: MCPServer, agent: Handle[Any]) -> dict[str, str]:
     """Wrap tool from agent for use by server."""
     logger.debug(f'Starting wrap agent for {agent.agent_id}')
     agent_info = await agent.agent_describe()
@@ -85,7 +85,7 @@ async def wrap_agent(server: FastMCP, agent: Handle[Any]) -> dict[str, str]:
 
 
 async def update_tools(
-    server: FastMCP,
+    server: MCPServer,
     existing: set[AgentId[Any]],
     client: ExchangeClient[Any],
     base_class: type[Agent] = Agent,
@@ -111,7 +111,7 @@ async def update_tools(
 
 
 async def refresh_loop(
-    server: FastMCP,
+    server: MCPServer,
     context: AppContext,
     interval_s: int = 300,
 ) -> None:
@@ -135,7 +135,7 @@ async def refresh_loop(
 
 @asynccontextmanager
 async def app_lifespan(
-    server: FastMCP,
+    server: MCPServer,
 ) -> AsyncIterator[AppContext]:
     """Initialize exchange client for lifespan of server."""
     if 'ACADEMY_MCP_EXCHANGE_ADDRESS' in os.environ:
@@ -164,7 +164,7 @@ async def app_lifespan(
         refresh_task.cancel()
 
 
-mcp = FastMCP('MCP Academy Exchange Interface', lifespan=app_lifespan)
+mcp = MCPServer('MCP Academy Exchange Interface', lifespan=app_lifespan)
 
 
 @mcp.tool()
@@ -175,7 +175,7 @@ async def add_agent(
     """Add agent to MCP server based on ID.
 
     Args:
-        ctx: FastMCP context (provided)
+        ctx: MCPServer context (provided)
         agent_uid: uuid of the agent to add to MCP server.
 
     Returns:
@@ -201,7 +201,7 @@ async def discover(
     module="academy.Agent".
 
     Args:
-        ctx: FastMCP context (provided)
+        ctx: MCPServer context (provided)
         agent: The type of the agent to return.
         module: The module where the agent was implemented.
         allow_subclasses: Return agents implementing subclasses of the

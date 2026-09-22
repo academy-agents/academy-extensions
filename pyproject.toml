@@ -20,8 +20,8 @@ classifiers = [
     "Programming Language :: Python :: Implementation :: CPython",
 ]
 dependencies = [
-    "academy-py>=0.3.1",
-    "mcp[cli]",
+    "academy-py>=1.0",
+    "mcp[cli]>=2",
 ]
 
 [project.urls]
@@ -102,7 +102,7 @@ markers = [
 
 [tool.ruff]
 line-length = 79
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.format]
 indent-style = "space"
