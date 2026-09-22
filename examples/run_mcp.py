@@ -9,7 +9,7 @@ from concurrent.futures import ProcessPoolExecutor
 from academy.agent import action
 from academy.agent import Agent
 from academy.exchange.cloud.client import spawn_http_exchange
-from academy.logging import init_logging
+from academy.logging.recommended import recommended_logging
 from academy.manager import Manager
 from academy.socket import open_port
 
@@ -42,18 +42,14 @@ async def main() -> None:
     This allows an example MCP server to run without querying the cloud
     exchange.
     """
-    init_logging()
-
     with spawn_http_exchange(
         host='0.0.0.0',
         port=open_port(),
     ) as exchange_factory:
         async with await Manager.from_exchange_factory(
             factory=exchange_factory,
-            executors=ProcessPoolExecutor(
-                max_workers=1,
-                initializer=init_logging,
-            ),
+            executors=ProcessPoolExecutor(max_workers=1),
+            log_config=recommended_logging(),
         ) as manager:
             os.environ['ACADEMY_MCP_EXCHANGE_ADDRESS'] = (
                 exchange_factory._info.url
