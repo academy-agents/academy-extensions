@@ -1,8 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from collections.abc import Generator
 from typing import Any
-from typing import Callable
 from unittest import mock
 
 import pytest
@@ -34,5 +34,5 @@ class MockServer:
 @pytest.fixture
 def mock_fastmcp() -> Generator[MockServer]:
     mcp = MockServer()
-    with mock.patch('mcp.server.fastmcp.FastMCP', return_value=mcp):
+    with mock.patch('mcp.server.mcpserver.MCPServer', return_value=mcp):
         yield mcp

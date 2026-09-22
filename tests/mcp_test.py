@@ -12,11 +12,9 @@ from academy.exchange import ExchangeFactory
 from academy.handle import Handle
 from academy.identifier import AgentId
 from academy.manager import Manager
-from mcp.server.fastmcp import Context
+from mcp import Client
+from mcp.server.mcpserver import Context
 from mcp.server.session import ServerSession
-from mcp.shared.memory import (
-    create_connected_server_and_client_session as client_session,
-)
 from mcp.types import TextContent
 
 from academy_extensions.mcp import add_agent
@@ -146,7 +144,7 @@ async def test_client(http_exchange_factory: ExchangeFactory[Any]):
     ) as manager:
         id_agent = await manager.launch(IdentityAgent)
         tool_name = format_name(id_agent.agent_id, 'identity')
-        async with client_session(mcp._mcp_server) as client:
+        async with Client(mcp) as client:
             result = await client.call_tool(
                 'add_agent',
                 {'agent_uid': id_agent.agent_id.uid},
@@ -169,7 +167,7 @@ async def test_client(http_exchange_factory: ExchangeFactory[Any]):
                 tool_name,
                 {'args': ('hello',), 'kwargs': {}},
             )
-            assert result.isError
+            assert result.is_error
 
             new_tools = await client.list_tools()
             assert len(new_tools.tools) == len(tools.tools) - 1
